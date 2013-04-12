@@ -53,8 +53,12 @@ function events_cdb_node_presave($node) {
     
     $detail->setTitle($node->title);
     
-    if (!empty($node->body)) {
-      $detail->setShortDescription(strip_tags($node->body['und'][0]['value']));
+    if (isset($node->{'field_short_description'})) {
+      $detail->setShortDescription(strip_tags(substr($node->{'field_short_description'}['und'][0]['value'],0,400)));
+    }
+    
+    if (isset($node->body) && !empty($node->body)) {
+      $detail->setLongDescription($node->body['und'][0]['value']);
     }
     
     $detail->setLanguage('nl');
@@ -165,7 +169,7 @@ function events_cdb_node_presave($node) {
     }
     
     try {
-      if ($update) {    
+      if ($update) {
         DrupalCultureFeed_EntryApi::updateEvent($event);
         $id = $event->getCdbId();
       }
